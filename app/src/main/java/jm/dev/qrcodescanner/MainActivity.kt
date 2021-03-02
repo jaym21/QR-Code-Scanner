@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.SurfaceHolder
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCameraDetector() {
         //initializing barcode detector
         detector = BarcodeDetector.Builder(this)
-                .setBarcodeFormats(Barcode.ALL_FORMATS)
+//                .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build()
         //initializing camera source
         cameraSource = CameraSource.Builder(this, detector)
@@ -111,20 +112,22 @@ class MainActivity : AppCompatActivity() {
             if (detections != null && detections.detectedItems.isNotEmpty()) {
                 //storing detected codes in sparseArray
                 val qrCodes: SparseArray<Barcode> = detections.detectedItems
+                val code = qrCodes.valueAt(0)
+
 
                 if(qrCodes.size() != 0) {
-                    binding.tvResult.post { Runnable {
-                        if (qrCodes.valueAt(0).email != null) {
-                            binding.tvResult.text = qrCodes.valueAt(0).email.address
-                            qrValue = qrCodes.valueAt(0).email.address
+                        if (code.email != null) {
+                            binding.tvResult.text = code.email.address
+                            qrValue = code.email.address
                             isEmail = true
                             binding.btnResult.text = "Send Mail"
+
                         } else {
                             isEmail = false
-                            qrValue = qrCodes.valueAt(0).displayValue
+                            binding.tvResult.text = code.displayValue
+                            qrValue = code.displayValue
                             binding.btnResult.text = "Open URL"
                         }
-                    } }
                 }
 
             } else {
