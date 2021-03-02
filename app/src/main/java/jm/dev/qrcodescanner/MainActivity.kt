@@ -1,7 +1,9 @@
 package jm.dev.qrcodescanner
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.SparseArray
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private val REQUESTCODE_CAMERA = 1000
     lateinit var detector: BarcodeDetector
     lateinit var cameraSource: CameraSource
+    var qrValue: String = ""
+    var isEmail: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +39,28 @@ class MainActivity : AppCompatActivity() {
             requestCameraPermission()
         }
 
-        setup()
+        setupCameraDetector()
+
+        binding.btnResult.setOnClickListener {
+            //checking if some qrCode is detected when button is pressed
+            if (qrValue.isNotEmpty()) {
+                //checking if detected code is an email
+                if (isEmail) {
+                    val intent = Intent(Intent.ACTION_SENDTO)
+                    intent.putExtra(Intent.EXTRA_EMAIL, qrValue)
+                    startActivity(intent)
+                }else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrValue)))
+                }
+            }
+        }
     }
 
-    private fun setup() {
+    private fun setupCameraDetector() {
         //initializing barcode detector
-        detector = BarcodeDetector.Builder(this).build()
+        detector = BarcodeDetector.Builder(this)
+                .setBarcodeFormats(Barcode.ALL_FORMATS)
+                .build()
         //initializing camera source
         cameraSource = CameraSource.Builder(this, detector)
             .setAutoFocusEnabled(true)
@@ -55,11 +75,16 @@ class MainActivity : AppCompatActivity() {
 
     //making surfaceCallback to setup surfaceView
     private val surfaceCallback = object: SurfaceHolder.Callback {
-        @SuppressLint("MissingPermission")
+
         override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
             try {
                 //starting the camera as soon as activity is created
-                cameraSource.start(surfaceHolder)
+                if (ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    cameraSource.start(surfaceHolder)
+                }else {
+                    requestCameraPermission()
+                }
+
             }catch (e: Exception) {
                 Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
             }
@@ -78,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     //making processor for detector
     private val processor = object: Detector.Processor<Barcode> {
         override fun release() {
-
+            Toast.makeText(applicationContext, "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
         }
 
         override fun receiveDetections(detections: Detector.Detections<Barcode>) {
@@ -86,11 +111,25 @@ class MainActivity : AppCompatActivity() {
             if (detections != null && detections.detectedItems.isNotEmpty()) {
                 //storing detected codes in sparseArray
                 val qrCodes: SparseArray<Barcode> = detections.detectedItems
-                val code = qrCodes.valueAt(0)
-                binding.tvResult.text = code.displayValue
+
+                if(qrCodes.size() != 0) {
+                    binding.tvResult.post { Runnable {
+                        if (qrCodes.valueAt(0).email != null) {
+                            binding.tvResult.text = qrCodes.valueAt(0).email.address
+                            qrValue = qrCodes.valueAt(0).email.address
+                            isEmail = true
+                            binding.btnResult.text = "Send Mail"
+                        } else {
+                            isEmail = false
+                            qrValue = qrCodes.valueAt(0).displayValue
+                            binding.btnResult.text = "Open URL"
+                        }
+                    } }
+                }
+
             } else {
                 //when no barcode is detected in the camera in surfaceView
-                binding.tvResult.text = ""
+                binding.tvResult.text = "No Barcode Detected"
             }
         }
 
@@ -109,10 +148,20 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUESTCODE_CAMERA && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setup()
+                setupCameraDetector()
             } else {
                 Toast.makeText(applicationContext, "Permission not granted", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupCameraDetector()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraSource.release()
     }
 }
