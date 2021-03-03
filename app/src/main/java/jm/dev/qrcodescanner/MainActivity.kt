@@ -74,19 +74,19 @@ class MainActivity : AppCompatActivity() {
         //starting detector camera
         setupCameraDetector()
 
-        binding.btnResult.setOnClickListener {
-            //checking if some qrCode is detected when button is pressed
-            if (qrValue.isNotEmpty()) {
-                //checking if detected code is an email
-                if (isEmail) {
-                    val intent = Intent(Intent.ACTION_SENDTO)
-                    intent.putExtra(Intent.EXTRA_EMAIL, qrValue)
-                    startActivity(intent)
-                }else {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrValue)))
-                }
-            }
-        }
+//        binding.btnResult.setOnClickListener {
+//            //checking if some qrCode is detected when button is pressed
+//            if (qrValue.isNotEmpty()) {
+//                //checking if detected code is an email
+//                if (isEmail) {
+//                    val intent = Intent(Intent.ACTION_SENDTO)
+//                    intent.putExtra(Intent.EXTRA_EMAIL, qrValue)
+//                    startActivity(intent)
+//                }else {
+//                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrValue)))
+//                }
+//            }
+//        }
     }
 
     private fun switchFlashLight(isFlashOn: Boolean) {
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCameraDetector() {
         //initializing barcode detector
         detector = BarcodeDetector.Builder(this)
-//                .setBarcodeFormats(Barcode.ALL_FORMATS)
+                .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build()
         //initializing camera source
         cameraSource = CameraSource.Builder(this, detector)
@@ -148,7 +148,6 @@ class MainActivity : AppCompatActivity() {
     //making processor for detector
     private val processor = object: Detector.Processor<Barcode> {
         override fun release() {
-            Toast.makeText(applicationContext, "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
         }
 
         override fun receiveDetections(detections: Detector.Detections<Barcode>) {
@@ -158,25 +157,27 @@ class MainActivity : AppCompatActivity() {
                 val qrCodes: SparseArray<Barcode> = detections.detectedItems
                 val code = qrCodes.valueAt(0)
 
-
-                if(qrCodes.size() != 0) {
-                        if (code.email != null) {
-                            binding.tvResult.text = code.email.address
-                            qrValue = code.email.address
-                            isEmail = true
-                            binding.btnResult.text = "Send Mail"
-
-                        } else {
-                            isEmail = false
-                            binding.tvResult.text = code.displayValue
-                            qrValue = code.displayValue
-                            binding.btnResult.text = "Open URL"
-                        }
-                }
+                val intent = Intent(this@MainActivity, ScanResult::class.java)
+                intent.putExtra("code", code)
+                startActivity(intent)
+//                if(qrCodes.size() != 0) {
+//                        if (code.email != null) {
+//                            binding.tvResult.text = code.email.address
+//                            qrValue = code.email.address
+//                            isEmail = true
+//                            binding.btnResult.text = "Send Mail"
+//
+//                        } else {
+//                            isEmail = false
+//                            binding.tvResult.text = code.displayValue
+//                            qrValue = code.displayValue
+//                            binding.btnResult.text = "Open URL"
+//                        }
+//                }
 
             } else {
                 //when no barcode is detected in the camera in surfaceView
-                binding.tvResult.text = "No Barcode Detected"
+//                binding.tvResult.text = "No Barcode Detected"
             }
         }
 
