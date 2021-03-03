@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ScanResult"
-    android:background="@color/bg_color">
+    android:background="@color/bg_color"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvScanResult"
@@ -13,9 +15,22 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         tools:text="www.google.com"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:textColor="@color/white"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnScanResult"
+            android:layout_width="130dp"
+            android:layout_height="60dp"
+            tools:visibility="visible"
+            tools:text="Send Mail"
+            android:backgroundTint="#40E6D6"
+            android:textColor="@color/white"
+            app:cornerRadius="30dp"
+            android:elevation="5dp"
+            android:layout_marginTop="20dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
