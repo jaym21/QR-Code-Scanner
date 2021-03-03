@@ -14,10 +14,19 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.65" />
 
+    <Button
+        android:id="@+id/btnFlash"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/ic_flash_off"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
     <View
         android:layout_width="3dp"
         android:layout_height="300dp"
-        android:background="@color/purple_200"
+        android:background="@color/teal_200"
         app:layout_constraintRight_toLeftOf="@id/svCamera"
         app:layout_constraintTop_toTopOf="@id/svCamera"
         app:layout_constraintBottom_toBottomOf="@id/svCamera"
@@ -26,7 +35,7 @@
     <View
         android:layout_width="300dp"
         android:layout_height="3dp"
-        android:background="@color/purple_200"
+        android:background="@color/teal_200"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/svCamera"
@@ -34,7 +43,7 @@
     <View
         android:layout_width="3dp"
         android:layout_height="300dp"
-        android:background="@color/purple_200"
+        android:background="@color/teal_200"
         app:layout_constraintLeft_toRightOf="@id/svCamera"
         app:layout_constraintTop_toTopOf="@id/svCamera"
         app:layout_constraintBottom_toBottomOf="@id/svCamera"
@@ -42,7 +51,7 @@
     <View
         android:layout_width="300dp"
         android:layout_height="3dp"
-        android:background="@color/purple_200"
+        android:background="@color/teal_200"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/svCamera"
@@ -76,7 +85,8 @@
         android:layout_height="60dp"
         tools:visibility="visible"
         tools:text="Send Mail"
-        android:backgroundTint="#7E2FEF"
+        android:backgroundTint="#40E6D6"
+        android:textColor="@color/white"
         app:cornerRadius="30dp"
         android:elevation="5dp"
         app:layout_constraintTop_toBottomOf="@id/tvResult"

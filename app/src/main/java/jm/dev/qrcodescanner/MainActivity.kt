@@ -1,9 +1,14 @@
 package jm.dev.qrcodescanner
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.Camera
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraManager
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.SparseArray
@@ -13,6 +18,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.isNotEmpty
+import com.google.android.gms.dynamic.IFragmentWrapper
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -27,8 +33,11 @@ class MainActivity : AppCompatActivity() {
     private val REQUESTCODE_CAMERA = 1000
     lateinit var detector: BarcodeDetector
     lateinit var cameraSource: CameraSource
+    lateinit var cameraManager: CameraManager
+    lateinit var cameraId: String
     var qrValue: String = ""
     var isEmail: Boolean = false
+    var isFlashOn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +49,29 @@ class MainActivity : AppCompatActivity() {
             requestCameraPermission()
         }
 
+        //checking if flash is available on device
+        val isFlashAvailable = applicationContext.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
+
+        if (!isFlashAvailable) {
+            Toast.makeText(applicationContext, "Flash not available", Toast.LENGTH_SHORT).show()
+            //disabling flash button if not available
+            binding.btnFlash.isEnabled = false
+        }
+
+
+        binding.btnFlash.setOnClickListener {
+            isFlashOn = !isFlashOn
+
+
+            if (isFlashOn) {
+                binding.btnFlash.background = ContextCompat.getDrawable(this, R.drawable.ic_flash_on)
+            }else {
+                binding.btnFlash.background = ContextCompat.getDrawable(this, R.drawable.ic_flash_off)
+            }
+            switchFlashLight(isFlashOn)
+        }
+
+        //starting detector camera
         setupCameraDetector()
 
         binding.btnResult.setOnClickListener {
@@ -55,6 +87,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun switchFlashLight(isFlashOn: Boolean) {
+        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        try {
+            cameraId = cameraManager.cameraIdList[0]
+            cameraManager.setTorchMode(cameraId, isFlashOn)
+        }catch (e: CameraAccessException) {
+            e.printStackTrace()
+        }
+
+
     }
 
     private fun setupCameraDetector() {

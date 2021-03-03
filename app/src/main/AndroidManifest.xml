@@ -3,6 +3,8 @@
     package="jm.dev.qrcodescanner">
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.hardware.camera.flash"/>
+    <uses-permission android:name="android.hardware.camera"/>
 
     <application
         android:allowBackup="true"
