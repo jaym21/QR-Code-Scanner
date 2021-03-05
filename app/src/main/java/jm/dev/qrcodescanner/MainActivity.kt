@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCameraDetector() {
         //initializing barcode detector
         detector = BarcodeDetector.Builder(this)
-                .setBarcodeFormats(Barcode.ALL_FORMATS)
+//                .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build()
         //initializing camera source
         cameraSource = CameraSource.Builder(this, detector)

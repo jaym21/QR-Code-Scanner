@@ -7,7 +7,17 @@
     tools:context=".ScanResult"
     android:background="@color/bg_color"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="QR Scan Result:"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"/>
 
     <TextView
         android:id="@+id/tvScanResult"
@@ -15,7 +25,14 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         tools:text="www.google.com"
-        android:textColor="@color/white"/>
+        android:textColor="@color/teal_700"
+        android:layout_marginBottom="30dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnScanResult"
@@ -27,10 +44,15 @@
             android:textColor="@color/white"
             app:cornerRadius="30dp"
             android:elevation="5dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginEnd="10dp"/>
 
     <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/btnShare"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_share"
+        android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
 
 </LinearLayout>

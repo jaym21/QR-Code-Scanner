@@ -39,13 +39,22 @@ class ScanResult : AppCompatActivity() {
             if (qrValue.isNotEmpty()) {
                 //checking if detected code is an email
                 if (isEmail) {
-                    val intent = Intent(Intent.ACTION_SENDTO)
+                    val intent = Intent(Intent.ACTION_SEND)
                     intent.putExtra(Intent.EXTRA_EMAIL, qrValue)
-                    startActivity(intent)
+                    intent.type = "message/rfc822"
+                    startActivity(Intent.createChooser(intent, "Select email"))
                 } else {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrValue)))
                 }
             }
+        }
+
+        binding.btnShare.setOnClickListener {
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.putExtra(Intent.EXTRA_TEXT, qrValue)
+            shareIntent.type = "text/plain"
+            startActivity(shareIntent)
         }
     }
 }
